@@ -9,3 +9,4 @@ class LibraryBook(models.Model):
     author = fields.Char(required=True)
     isbn = fields.Char(string='ISBN')
     publish_year = fields.Integer()
+    copy_ids = fields.One2many('library.copy', 'book_id', string='Copies')

@@ -29,6 +29,16 @@
                             <field name="publish_year"/>
                         </group>
                     </group>
+                    <notebook>
+                        <page string="Copies">
+                            <field name="copy_ids">
+                                <list editable="bottom">
+                                    <field name="inventory_number"/>
+                                    <field name="condition"/>
+                                </list>
+                            </field>
+                        </page>
+                    </notebook>
                 </sheet>
             </form>
         </field>
