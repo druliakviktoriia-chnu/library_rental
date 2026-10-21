@@ -10,6 +10,7 @@
         'security/ir.model.access.csv',
         'views/book_views.xml',
         'views/copy_views.xml',
+        'views/member_views.xml',
     ],
     'installable': True,
     'application': True,
