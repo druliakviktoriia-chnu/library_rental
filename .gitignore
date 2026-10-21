@@ -1,0 +1,10 @@
+﻿__pycache__/
+*.py[cod]
+*.pyo
+venv/
+.venv/
+.idea/
+.vscode/
+*.log
+odoo.conf
+.DS_Store
