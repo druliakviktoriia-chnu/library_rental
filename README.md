@@ -53,3 +53,43 @@
 1. Додати C:\odoo_custom до addons_path в odoo.conf.
 2. Оновити список застосунків (режим розробника) і встановити Library Rental.
 3. Скріншоти: screenshot_installed.png, screenshot_ondelete_restrict.png, screenshot_orm_queries.png.
+
+
+## Практичне заняття 3: бізнес-логіка
+
+### Параметри
+
+- Термін видачі: 14 днів (константа LOAN_PERIOD_DAYS).
+- Ставка штрафу: 5 грн за день прострочення (константа FINE_PER_DAY).
+- Обидві величини задані константами на початку models/loan.py і використовуються лише через них, не зашиті в кількох місцях.
+
+### Обчислювані поля
+
+- due_date: compute + store=True, @api.depends('loan_date'), значення loan_date + 14 днів.
+- fine_amount: compute + store=True, @api.depends('return_date', 'due_date'). Рахується лише якщо return_date заповнено і воно пізніше за due_date: днів прострочення * 5. В інших випадках 0.
+- is_overdue: compute БЕЗ store, @api.depends('state', 'due_date'). Істина для активних видач з due_date раніше за сьогодні. Використовується лише для червоного підсвічування рядків у списку (decoration-danger).
+
+### onchange
+
+@api.onchange('copy_id') лише повертає попередження (warning), якщо вибраний примірник уже має активну видачу. Збереження він не блокує: це тільки підказка в UI.
+
+### Обмеження @api.constrains
+
+1. Один примірник не може мати дві активні видачі одночасно (copy_id, state). Запобігає ситуації, коли один фізичний примірник записаний одразу на двох читачів. Пошук конфліктів явно виключає поточний запис (id != loan.id), інакше кожна активна видача конфліктувала б сама з собою.
+2. due_date має бути пізніше loan_date (loan_date, due_date). Запобігає видачі з нелогічним терміном.
+3. return_date, якщо задано, не може бути раніше loan_date (loan_date, return_date). Запобігає даті повернення до дати видачі.
+
+У всіх трьох випадках піднімається ValidationError з повідомленням українською.
+
+### Що згенерував AI
+
+models/loan.py цілком (compute-методи, onchange, три constrains) і оновлений loan_views.xml (колонки Due Date і Fine, підсвічування прострочених видач).
+
+### Що перевірено і виправлено вручну
+
+1. Перевірено @api.depends вручну: fine_amount залежить від двох полів (return_date і due_date), обидва перелічені (типова помилка AI: залишити лише одне з них). Результат перевірено на записах: INV-101 з Loan Date Sep 1 і Return Date Sep 20 має Due Date Sep 15 і Fine 25.0 (5 днів * 5 грн), а видача, повернена до терміну, має Fine 0.0.
+2. Перевірено, що store=True стоїть на due_date і fine_amount, а is_overdue навмисно без store.
+3. Перевірено, що метод заборони дублювання виключає self.id, а onchange повертає лише warning і не піднімає ValidationError.
+4. Демо-дані (data/library_data.xml) містили значення due_date для обчислюваного поля. Їх видалено, бо тепер due_date рахується з loan_date.
+
+Скріншот: screenshot_fine_amount.png (форма видачі зі штрафом 25.0).
