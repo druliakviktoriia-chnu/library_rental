@@ -4,14 +4,16 @@
         <field name="name">library.loan.list</field>
         <field name="model">library.loan</field>
         <field name="arch" type="xml">
-            <list>
+            <list decoration-danger="is_overdue">
                 <field name="copy_id"/>
                 <field name="book_id"/>
                 <field name="member_id"/>
                 <field name="loan_date"/>
                 <field name="due_date"/>
                 <field name="return_date"/>
+                <field name="fine_amount"/>
                 <field name="state"/>
+                <field name="is_overdue" column_invisible="1"/>
             </list>
         </field>
     </record>
@@ -27,11 +29,13 @@
                             <field name="copy_id"/>
                             <field name="member_id"/>
                             <field name="state"/>
+                            <field name="is_overdue"/>
                         </group>
                         <group string="Dates">
                             <field name="loan_date"/>
                             <field name="due_date"/>
                             <field name="return_date"/>
+                            <field name="fine_amount"/>
                         </group>
                     </group>
                     <group string="Book (from copy)">
