@@ -9,6 +9,7 @@
                 <field name="name"/>
                 <field name="phone"/>
                 <field name="email"/>
+                <field name="user_id"/>
             </list>
         </field>
     </record>
@@ -23,6 +24,7 @@
                         <group>
                             <field name="name"/>
                             <field name="membership_number"/>
+                            <field name="user_id"/>
                         </group>
                         <group>
                             <field name="phone"/>
@@ -40,5 +42,5 @@
         <field name="view_mode">list,form</field>
     </record>
 
-    <menuitem id="library_menu_members" name="Members" parent="library_menu_root" action="library_member_action"/>
+    <menuitem id="library_menu_members" name="Members" parent="library_menu_root" action="library_member_action" groups="library_rental.group_library_librarian"/>
 </odoo>

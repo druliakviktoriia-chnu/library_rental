@@ -54,5 +54,5 @@
         <field name="view_mode">list,form</field>
     </record>
 
-    <menuitem id="library_menu_loans" name="Loans" parent="library_menu_root" action="library_loan_action"/>
+    <menuitem id="library_menu_loans" name="Loans" parent="library_menu_root" action="library_loan_action" groups="library_rental.group_library_librarian"/> <menuitem id="library_menu_my_loans" name="Мої видачі" parent="library_menu_root" action="library_loan_action" groups="library_rental.group_library_reader"/>
 </odoo>

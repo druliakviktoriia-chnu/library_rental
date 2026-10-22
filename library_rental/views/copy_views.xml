@@ -34,5 +34,5 @@
         <field name="view_mode">list,form</field>
     </record>
 
-    <menuitem id="library_menu_copies" name="Copies" parent="library_menu_root" action="library_copy_action"/>
+    <menuitem id="library_menu_copies" name="Copies" parent="library_menu_root" action="library_copy_action" groups="library_rental.group_library_librarian"/>
 </odoo>

@@ -50,6 +50,6 @@
         <field name="view_mode">list,form</field>
     </record>
 
-    <menuitem id="library_menu_root" name="Library" sequence="10"/>
-    <menuitem id="library_menu_books" name="Books" parent="library_menu_root" action="library_book_action"/>
+    <menuitem id="library_menu_root" name="Library" sequence="10" groups="library_rental.group_library_librarian,library_rental.group_library_reader"/>
+    <menuitem id="library_menu_books" name="Books" parent="library_menu_root" action="library_book_action" groups="library_rental.group_library_librarian"/>
 </odoo>
