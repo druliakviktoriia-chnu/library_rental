@@ -143,3 +143,47 @@ library_security.xml, ir.model.access.csv, поле user_id, групи на men
 1. У Odoo 19 змінилась структура груп: групи прив'язуються до res.groups.privilege (а не напряму до категорії), а поле користувача називається group_ids (раніше groups_id). Це з'ясовано перегляданням res_groups.py і res_users.py встановленого Odoo, бо методичка й типові приклади написані під старіші версії.
 2. Стару групу прав base.group_user з ir.model.access.csv прибрано: вона давала повний доступ усім внутрішнім користувачам, зокрема Читачу.
 3. PowerShell має вбудований псевдонім R (Invoke-History), тому допоміжна функція з такою назвою не працювала. Перейменовано на Rep.
+
+
+## Практичне заняття 5: wizard повернення і звіт
+
+### Wizard library.return.wizard
+
+- Успадковує models.TransientModel, поля: loan_id (Many2one до library.loan, required), condition_on_return (Selection з тими самими значеннями, що й library.copy.condition, required), notes (Text).
+- Значення стану примірника винесені в константу CONDITIONS у models/copy.py і імпортуються у візард, щоб списки не розійшлися.
+- default_get підставляє loan_id з active_id, лише якщо active_model == 'library.loan' і значення ще не задане.
+- action_confirm(): self.ensure_one(), перевірка що видача ще активна, запис state='returned' і return_date=today, перенесення condition_on_return у copy_id.condition. fine_amount перераховується автоматично через @api.depends('return_date', 'due_date').
+- Форма і дія-вікно з target="new" у views/return_wizard_views.xml. Кнопка "Оформити повернення" на формі Loan видима лише для активних видач і лише Бібліотекарю.
+- Права на модель візарда додано до ir.model.access.csv для групи Бібліотекар.
+
+### Звіт "Історія видач читача"
+
+- Модель звіту library.member, report_type qweb-pdf, binding_model_id на library.member (пункт у меню дій форми читача).
+- Шаблон report_member_loan_history: web.html_container, цикл по docs, web.external_layout, таблиця по member.loan_ids (книга, дата видачі, дата повернення, штраф, стан).
+- Для цього додано поле loan_ids (One2many) на library.member.
+- На цій машині не встановлено wkhtmltopdf, тому Odoo показує звіт як HTML. PDF (member_loan_history.pdf) отримано друком HTML-версії звіту (/report/html/...) у PDF. Сам звіт зареєстровано як qweb-pdf і на машині з wkhtmltopdf видасть PDF автоматично.
+
+### Що згенерував AI без правок
+
+models/return_wizard.py (структура полів, default_get, action_confirm), форма візарда і дія-вікно, заголовок шаблону звіту.
+
+### Результати AI-рев'ю 
+
+1. ensure_one(): action_confirm починається з self.ensure_one() і працює з одним записом, без циклу for rec in self.
+2. Модель звіту: ir.actions.report прив'язаний до library.member, і t-foreach по docs ітерує саме читачів (member), а видачі береться через member.loan_ids.
+3. default_get перевіряє active_model, щоб loan_id не підставлявся з чужого контексту.
+
+### Що виправлено вручну
+
+1. У методичці шаблон звіту використовував member.loan_ids, але на library.member такого поля не було. Додано One2many loan_ids.
+2. report_name у ir.actions.report (report_member_loan_history) не збігався з id шаблону (report_member_loan_history_document), тому Odoo не знайшов би шаблон. Зроблено один шаблон з id, що збігається з report_name.
+3. У прикладі web.external_layout стояв поза циклом і не було web.html_container. Виправлено на html_container, потім цикл по docs, потім external_layout всередині.
+4. Кнопка "Оформити повернення" пропонувала контекст active_id. Використано id запису форми, а default_get додатково підстраховує через active_id.
+5. Кнопку обмежено групою Бібліотекар (groups), бо Читач не має права запису і отримав би помилку доступу.
+6. Для візарда додано рядок у ir.model.access.csv: Odoo видавав попередження, що модель не має прав доступу.
+7. Файл return_wizard_views.xml підключено в __manifest__.py перед loan_views.xml, бо кнопка посилається на дію візарда.
+
+### Перевірка
+
+Видачу INV-104 (Ivan Petrenko, Loan Date 09/01/2026, Due Date 09/15/2026) закрито візардом: State Returned, Return Date сьогоднішня, Fine 235.0 (47 днів х 5 грн), стан примірника INV-104 змінився на Good.
+Скріншоти: screenshot_wizard.png, screenshot_wizard_result.png. PDF звіту для Andrii Melnyk: member_loan_history.pdf.
