@@ -9,6 +9,7 @@ class LibraryMember(models.Model):
     membership_number = fields.Char(required=True, copy=False)
     phone = fields.Char()
     email = fields.Char()
+    loan_ids = fields.One2many('library.loan', 'member_id', string='Loans')
     user_id = fields.Many2one(
         'res.users', string='Odoo User', ondelete='set null')
 
