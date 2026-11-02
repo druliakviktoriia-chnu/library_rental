@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo noupdate="1">
+    <!-- Books -->
+    <record id="book_5" model="library.book">
+        <field name="name">The Land</field>
+        <field name="author">Olha Kobylianska</field>
+        <field name="isbn">978-0-00-000005-9</field>
+        <field name="publish_year">1902</field>
+    </record>
+    <record id="book_6" model="library.book">
+        <field name="name">Do Oxen Low When the Mangers Are Full?</field>
+        <field name="author">Panas Myrnyi</field>
+        <field name="isbn">978-0-00-000006-6</field>
+        <field name="publish_year">1880</field>
+    </record>
+    <record id="book_7" model="library.book">
+        <field name="name">The Cathedral</field>
+        <field name="author">Oles Honchar</field>
+        <field name="isbn">978-0-00-000007-3</field>
+        <field name="publish_year">1968</field>
+    </record>
+
+    <!-- Copies -->
+    <record id="copy_7" model="library.copy">
+        <field name="book_id" ref="book_5"/>
+        <field name="inventory_number">INV-107</field>
+        <field name="condition">good</field>
+    </record>
+    <record id="copy_8" model="library.copy">
+        <field name="book_id" ref="book_5"/>
+        <field name="inventory_number">INV-108</field>
+        <field name="condition">new</field>
+    </record>
+    <record id="copy_9" model="library.copy">
+        <field name="book_id" ref="book_6"/>
+        <field name="inventory_number">INV-109</field>
+        <field name="condition">damaged</field>
+    </record>
+    <record id="copy_10" model="library.copy">
+        <field name="book_id" ref="book_7"/>
+        <field name="inventory_number">INV-110</field>
+        <field name="condition">good</field>
+    </record>
+    <record id="copy_11" model="library.copy">
+        <field name="book_id" ref="book_7"/>
+        <field name="inventory_number">INV-111</field>
+        <field name="condition">good</field>
+    </record>
+    <record id="copy_12" model="library.copy">
+        <field name="book_id" ref="book_7"/>
+        <field name="inventory_number">INV-112</field>
+        <field name="condition">new</field>
+    </record>
+    <record id="copy_13" model="library.copy">
+        <field name="book_id" ref="book_4"/>
+        <field name="inventory_number">INV-113</field>
+        <field name="condition">good</field>
+    </record>
+
+    <!-- Member -->
+    <record id="member_4" model="library.member">
+        <field name="name">Iryna Savchuk</field>
+        <field name="membership_number">M-104</field>
+        <field name="email">iryna@example.com</field>
+    </record>
+
+    <!-- Loans: 2 overdue active, 1 active, 2 returned -->
+    <record id="loan_5" model="library.loan">
+        <field name="copy_id" ref="copy_7"/>
+        <field name="member_id" ref="member_2"/>
+        <field name="loan_date">2026-09-25</field>
+        <field name="state">active</field>
+    </record>
+    <record id="loan_6" model="library.loan">
+        <field name="copy_id" ref="copy_10"/>
+        <field name="member_id" ref="member_4"/>
+        <field name="loan_date">2026-10-05</field>
+        <field name="state">active</field>
+    </record>
+    <record id="loan_7" model="library.loan">
+        <field name="copy_id" ref="copy_11"/>
+        <field name="member_id" ref="member_1"/>
+        <field name="loan_date">2026-10-28</field>
+        <field name="state">active</field>
+    </record>
+    <record id="loan_8" model="library.loan">
+        <field name="copy_id" ref="copy_9"/>
+        <field name="member_id" ref="member_3"/>
+        <field name="loan_date">2026-09-01</field>
+        <field name="return_date">2026-09-30</field>
+        <field name="state">returned</field>
+    </record>
+    <record id="loan_9" model="library.loan">
+        <field name="copy_id" ref="copy_13"/>
+        <field name="member_id" ref="member_4"/>
+        <field name="loan_date">2026-10-10</field>
+        <field name="return_date">2026-10-20</field>
+        <field name="state">returned</field>
+    </record>
+</odoo>

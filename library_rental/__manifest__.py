@@ -16,6 +16,8 @@
         'views/loan_views.xml',
         'report/report_member_loan_history.xml',
         'data/library_data.xml',
+        'data/library_demo_data.xml',
+        'data/ir_cron_data.xml',
     ],
     'installable': True,
     'application': True,

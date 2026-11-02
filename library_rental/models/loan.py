@@ -1,7 +1,10 @@
+import logging
 from datetime import timedelta
 
 from odoo import api, fields, models
 from odoo.exceptions import ValidationError
+
+_logger = logging.getLogger(__name__)
 
 LOAN_PERIOD_DAYS = 14
 FINE_PER_DAY = 5.0
@@ -96,3 +99,27 @@ class LibraryLoan(models.Model):
             if loan.loan_date and loan.return_date and loan.return_date < loan.loan_date:
                 raise ValidationError(
                     'Фактична дата повернення не може бути раніше дати видачі.')
+
+    @api.model
+    def _cron_check_overdue_loans(self):
+        today = fields.Date.today()
+        overdue = self.search([
+            ('state', '=', 'active'),
+            ('due_date', '<', today),
+        ])
+        processed = 0
+        for loan in overdue:
+            try:
+                days = (today - loan.due_date).days
+                _logger.warning(
+                    'Прострочена видача %s: примірник %s, читач %s, прострочено на %s дн.',
+                    loan.id, loan.copy_id.inventory_number,
+                    loan.member_id.name, days)
+                processed += 1
+            except Exception:
+                _logger.exception('Не вдалося обробити видачу %s', loan.id)
+                continue
+        _logger.info(
+            'Перевірка прострочених видач завершена: знайдено %s, оброблено %s.',
+            len(overdue), processed)
+        return True
